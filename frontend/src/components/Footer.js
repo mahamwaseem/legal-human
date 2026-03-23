@@ -29,12 +29,12 @@ export default function Footer() {
                 </div>
               </div>
               <p className="footer__desc">
-                Experts in Tax and Immigration Law in Spain. Providing personalized legal services with a human-centered approach.
+                {t.footer.description}
               </p>
             </div>
 
             <div className="footer__col">
-              <h4 className="footer__col-title">Contact</h4>
+              <h4 className="footer__col-title">{t.footer.contact}</h4>
               <div className="footer__contact-list">
                 <a href="tel:+34665127758" className="footer__contact-item">
                   <span className="footer__contact-icon">📞</span>
@@ -52,17 +52,17 @@ export default function Footer() {
             </div>
 
             <div className="footer__col">
-              <h4 className="footer__col-title">Navigation</h4>
+              <h4 className="footer__col-title">{t.footer.navigation}</h4>
               <nav className="footer__nav">
-                <Link to="/" className="footer__nav-link">Home</Link>
-                <Link to="/about" className="footer__nav-link">About Us</Link>
-                <Link to="/services" className="footer__nav-link">Services</Link>
-                <Link to="/contact" className="footer__nav-link">Contact</Link>
+                <Link to="/" className="footer__nav-link">{t.footer.home}</Link>
+                <Link to="/about" className="footer__nav-link">{t.footer.aboutUs}</Link>
+                <Link to="/services" className="footer__nav-link">{t.footer.services}</Link>
+                <Link to="/contact" className="footer__nav-link">{t.footer.contactLink}</Link>
               </nav>
             </div>
 
             <div className="footer__col">
-              <h4 className="footer__col-title">Legal</h4>
+              <h4 className="footer__col-title">{t.footer.legalSection}</h4>
               <nav className="footer__nav">
                 <Link to="/privacy" className="footer__nav-link">{t.footer.privacy}</Link>
                 <Link to="/legal-notice" className="footer__nav-link">{t.footer.legal}</Link>

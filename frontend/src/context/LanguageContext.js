@@ -131,6 +131,14 @@ export const translations = {
       privacy: 'Privacy Policy',
       legal: 'Legal Notice',
       rights: 'All rights reserved.',
+      contact: 'Contact',
+      navigation: 'Navigation',
+      legalSection: 'Legal',
+      home: 'Home',
+      aboutUs: 'About Us',
+      services: 'Services',
+      contactLink: 'Contact',
+      description: 'Experts in Tax and Immigration Law in Spain. Providing personalized legal services with a human-centered approach.',
     }
   },
   es: {
@@ -261,6 +269,14 @@ export const translations = {
       privacy: 'Política de Privacidad',
       legal: 'Aviso Legal',
       rights: 'Todos los derechos reservados.',
+      contact: 'Contacto',
+      navigation: 'Navegación',
+      legalSection: 'Legal',
+      home: 'Inicio',
+      aboutUs: 'Sobre Nosotros',
+      services: 'Servicios',
+      contactLink: 'Contacto',
+      description: 'Expertos en Derecho Fiscal e Inmigración en España. Ofrecemos servicios legales personalizados con un enfoque centrado en las personas.',
     }
   }
 };
