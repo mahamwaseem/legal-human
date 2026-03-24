@@ -30,13 +30,15 @@ export const translations = {
         name: 'Yasmina Maini',
         role: 'Tax Lawyer & Advisor',
         bio: 'Lawyer and tax advisor specializing in tax planning, optimization, and international taxation.',
-        details: 'With extensive experience in Spanish tax law, Yasmina helps individuals and businesses minimize their fiscal burden through legal and efficient strategies. She provides expert guidance on income tax, wealth tax, and international tax agreements.'
+        details: 'With extensive experience in Spanish tax law, Yasmina helps individuals and businesses minimize their fiscal burden through legal and efficient strategies. She provides expert guidance on income tax, wealth tax, and international tax agreements.',
+        tags: ['IRPF', 'Wealth Tax', 'International Tax', 'Beckham Law']
       },
       dana: {
         name: 'Dana Maini',
         role: 'Human Rights & Immigration Expert',
         bio: 'Human rights and European law expert with extensive experience providing legal advice to migrants.',
-        details: 'Dana specializes in immigration law, helping migrants and their families navigate the Spanish legal system. Her expertise covers residence permits, nationality applications, asylum processes, and EU resident permits.'
+        details: 'Dana specializes in immigration law, helping migrants and their families navigate the Spanish legal system. Her expertise covers residence permits, nationality applications, asylum processes, and EU resident permits.',
+        tags: ['Residence Permits', 'Human Rights', 'EU Law', 'Asylum']
       },
       values: {
         title: 'Our Values',
@@ -168,13 +170,15 @@ export const translations = {
         name: 'Yasmina Maini',
         role: 'Abogada y Asesora Fiscal',
         bio: 'Abogada y asesora fiscal especializada en planificación fiscal, optimización y fiscalidad internacional.',
-        details: 'Con amplia experiencia en derecho fiscal español, Yasmina ayuda a particulares y empresas a minimizar su carga fiscal mediante estrategias legales y eficientes. Ofrece orientación experta en IRPF, impuesto sobre el patrimonio y convenios fiscales internacionales.'
+        details: 'Con amplia experiencia en derecho fiscal español, Yasmina ayuda a particulares y empresas a minimizar su carga fiscal mediante estrategias legales y eficientes. Ofrece orientación experta en IRPF, impuesto sobre el patrimonio y convenios fiscales internacionales.',
+        tags: ['IRPF', 'Impuesto sobre el Patrimonio', 'Fiscalidad Internacional', 'Ley Beckham']
       },
       dana: {
         name: 'Dana Maini',
         role: 'Experta en Derechos Humanos e Inmigración',
         bio: 'Experta en derechos humanos y derecho europeo con amplia experiencia asesorando a migrantes.',
-        details: 'Dana está especializada en derecho de extranjería, ayudando a migrantes y sus familias a navegar el sistema legal español. Su experiencia abarca permisos de residencia, solicitudes de nacionalidad, procesos de asilo y permisos de residente europeo.'
+        details: 'Dana está especializada en derecho de extranjería, ayudando a migrantes y sus familias a navegar el sistema legal español. Su experiencia abarca permisos de residencia, solicitudes de nacionalidad, procesos de asilo y permisos de residente europeo.',
+        tags: ['Permisos de Residencia', 'Derechos Humanos', 'Derecho de la UE', 'Asilo']
       },
       values: {
         title: 'Nuestros Valores',

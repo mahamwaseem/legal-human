@@ -47,7 +47,7 @@ export default function About() {
           <p className="team-card__bio">{t.about.yasmina.bio}</p>
           <p className="team-card__details">{t.about.yasmina.details}</p>
           <div className="team-card__tags">
-            {['IRPF', 'Wealth Tax', 'International Tax', 'Beckham Law'].map(tag => (
+            {t.about.yasmina.tags.map(tag => (
               <span className="team-card__tag" key={tag}>{tag}</span>
             ))}
           </div>
@@ -72,7 +72,7 @@ export default function About() {
           <p className="team-card__bio">{t.about.dana.bio}</p>
           <p className="team-card__details">{t.about.dana.details}</p>
           <div className="team-card__tags">
-            {['Residence Permits', 'Human Rights', 'EU Law', 'Asylum'].map(tag => (
+            {t.about.dana.tags.map(tag => (
               <span className="team-card__tag" key={tag}>{tag}</span>
             ))}
           </div>
