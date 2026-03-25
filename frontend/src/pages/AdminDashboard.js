@@ -140,7 +140,7 @@ export default function AdminDashboard() {
                 <p className="admin-top__subtitle">{t.adminDashboard.top.subtitle}</p>
               </div>
               <button onClick={() => setShowAddForm(true)} className="admin-top__btn">
-                + {t.adminDashboard.top.new}
+                {t.adminDashboard.top.new}
               </button>
             </div>
 

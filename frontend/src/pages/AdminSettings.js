@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/AdminSettings.css';
 import { useLang } from '../context/LanguageContext';
+import '../styles/AdminDashboard.css'; // ✅ SAME SIDEBAR CSS
+import '../styles/AdminSettings.css';
 
 const API_BASE = 'http://localhost:5000/api';
 
 export default function AdminSettings() {
   const navigate = useNavigate();
-  const { t } = useLang(); // ✅ ADDED
+  const { t } = useLang();
 
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -17,12 +18,17 @@ export default function AdminSettings() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
     const token = localStorage.getItem('admin-token');
     if (!token) {
       navigate('/admin/login');
     }
   }, [navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('admin-token');
+    localStorage.removeItem('admin-login-time');
+    navigate('/');
+  };
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
@@ -30,7 +36,7 @@ export default function AdminSettings() {
     setSuccess('');
 
     if (newPassword.length < 6) {
-      setError(t.adminSettings.errors.length);
+      setError(t.adminSettings.errors.short);
       return;
     }
 
@@ -50,10 +56,7 @@ export default function AdminSettings() {
       const response = await fetch(`${API_BASE}/auth/change-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          currentPassword,
-          newPassword
-        })
+        body: JSON.stringify({ currentPassword, newPassword })
       });
 
       const result = await response.json();
@@ -65,15 +68,12 @@ export default function AdminSettings() {
         setConfirmPassword('');
 
         setTimeout(() => {
-          localStorage.removeItem('admin-token');
-          localStorage.removeItem('admin-login-time');
-          navigate('/admin/login');
+          handleLogout();
         }, 1500);
       } else {
-        setError(result.message || t.adminSettings.errors.failed);
+        setError(result.message || t.adminSettings.errors.fail);
       }
     } catch (err) {
-      console.error(err);
       setError(t.adminSettings.errors.server);
     } finally {
       setIsLoading(false);
@@ -81,100 +81,122 @@ export default function AdminSettings() {
   };
 
   return (
-    <main className="admin-settings page-enter">
-      <div className="admin-settings__container">
+    <main className="admin-dashboard">
+      <div className="admin-dashboard__wrapper">
 
-        <div className="admin-settings__header">
-          <button
-            onClick={() => navigate('/admin')}
-            className="admin-settings__back"
-          >
-            ← {t.adminSettings.back}
-          </button>
-        </div>
-
-        <div className="admin-settings__card">
-
-          <div className="admin-settings__title-section">
-            <h1 className="admin-settings__title">
-              {t.adminSettings.title}
-            </h1>
-            <p className="admin-settings__subtitle">
-              {t.adminSettings.subtitle}
-            </p>
+        {/* ✅ SAME SIDEBAR */}
+        <aside className="admin-sidebar">
+          <div className="admin-sidebar__header">
+            <div className="admin-sidebar__text">
+              <h2>LEGAL HUMAN</h2>
+              <p>{t.adminDashboard.sidebar.panel}</p>
+            </div>
           </div>
 
-          <form onSubmit={handleChangePassword} className="admin-settings__form">
-            {error && <div className="admin-settings__error">{error}</div>}
-            {success && <div className="admin-settings__success">{success}</div>}
-
-            <div className="admin-settings__field">
-              <label className="admin-settings__label">
-                {t.adminSettings.current}
-              </label>
-              <input
-                type="password"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                placeholder={t.adminSettings.placeholders.current}
-                className="admin-settings__input"
-                disabled={isLoading}
-                required
-              />
-            </div>
-
-            <div className="admin-settings__field">
-              <label className="admin-settings__label">
-                {t.adminSettings.new}
-              </label>
-              <input
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                placeholder={t.adminSettings.placeholders.new}
-                className="admin-settings__input"
-                disabled={isLoading}
-                required
-              />
-            </div>
-
-            <div className="admin-settings__field">
-              <label className="admin-settings__label">
-                {t.adminSettings.confirm}
-              </label>
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder={t.adminSettings.placeholders.confirm}
-                className="admin-settings__input"
-                disabled={isLoading}
-                required
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="admin-settings__btn"
-              disabled={isLoading || !currentPassword || !newPassword || !confirmPassword}
+          <nav className="admin-sidebar__nav">
+            <a
+              onClick={() => navigate('/admin')}
+              className="admin-sidebar__nav-item"
             >
-              {isLoading ? t.adminSettings.loading : t.adminSettings.button}
-            </button>
-          </form>
+              {t.adminDashboard.sidebar.dashboard}
+            </a>
 
-          <div className="admin-settings__info">
-            <h3 className="admin-settings__info-title">
-              {t.adminSettings.defaultTitle}
-            </h3>
-            <p className="admin-settings__info-text">
-              {t.adminSettings.defaultText} <code>LegalAdmin@2024</code>
-            </p>
-            <p className="admin-settings__info-note">
-              {t.adminSettings.note}
-            </p>
+            <a className="admin-sidebar__nav-item active">
+              {t.adminDashboard.sidebar.settings}
+            </a>
+          </nav>
+
+          <button onClick={handleLogout} className="admin-sidebar__logout">
+            {t.adminDashboard.sidebar.logout}
+          </button>
+        </aside>
+
+        {/* ✅ CONTENT */}
+        <div className="admin-dashboard__content">
+          <div className="admin-settings__container">
+
+            <div className="admin-settings__card">
+              <div className="admin-settings__title-section">
+                <h1 className="admin-settings__title">
+                  {t.adminSettings.title}
+                </h1>
+                <p className="admin-settings__subtitle">
+                  {t.adminSettings.subtitle}
+                </p>
+              </div>
+
+              <form onSubmit={handleChangePassword} className="admin-settings__form">
+
+                {error && <div className="admin-settings__error">{error}</div>}
+                {success && <div className="admin-settings__success">{success}</div>}
+
+                <div className="admin-settings__field">
+                  <label className="admin-settings__label">
+                    {t.adminSettings.current}
+                  </label>
+                  <input
+                    type="password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    className="admin-settings__input"
+                    disabled={isLoading}
+                    required
+                  />
+                </div>
+
+                <div className="admin-settings__field">
+                  <label className="admin-settings__label">
+                    {t.adminSettings.new}
+                  </label>
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="admin-settings__input"
+                    disabled={isLoading}
+                    required
+                  />
+                </div>
+
+                <div className="admin-settings__field">
+                  <label className="admin-settings__label">
+                    {t.adminSettings.confirm}
+                  </label>
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="admin-settings__input"
+                    disabled={isLoading}
+                    required
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="admin-settings__btn"
+                  disabled={isLoading}
+                >
+                  {isLoading ? t.adminSettings.loading : t.adminSettings.button}
+                </button>
+
+              </form>
+
+              <div className="admin-settings__info">
+                <h3>{t.adminSettings.defaultTitle}</h3>
+                <p>
+                  {t.adminSettings.defaultText}{' '}
+                  <code>LegalAdmin@2024</code>
+                </p>
+                <p className="admin-settings__info-note">
+                  {t.adminSettings.note}
+                </p>
+              </div>
+
+            </div>
           </div>
-
         </div>
+
       </div>
     </main>
   );
