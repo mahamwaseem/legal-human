@@ -60,10 +60,10 @@ export default function Home() {
             {activeBanners.map(banner => (
               <div key={banner.id} className={`home-banner home-banner--${banner.type}`}>
                 <div className="home-banner__icon">
-                  {banner.type === 'success' && '✓'}
-                  {banner.type === 'warning' && '⚠'}
-                  {banner.type === 'alert' && '!'}
-                  {banner.type === 'info' && 'i'}
+                  {banner.type === 'success' && '✅'}
+                  {banner.type === 'warning' && '⚠️'}
+                  {banner.type === 'alert' && '🚨'}
+                  {banner.type === 'info' && '📢'}
                 </div>
                 <div className="home-banner__content">
                   <h3 className="home-banner__title">{banner.title}</h3>
