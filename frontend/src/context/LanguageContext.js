@@ -150,7 +150,81 @@ export const translations = {
       button: "Login",
       loading: "Authenticating...",
       error: "Invalid password. Please try again."
-    }
+    },
+    adminDashboard: {
+      sidebar: {
+        panel: "Admin Panel",
+        dashboard: "Dashboard",
+        settings: "Settings",
+        logout: "Logout"
+      },
+      top: {
+        title: "Banner Manager",
+        subtitle: "Create and manage homepage announcement banners",
+        new: "+ New Banner"
+      },
+      stats: {
+        total: "TOTAL",
+        active: "ACTIVE",
+        inactive: "INACTIVE"
+      },
+      search: "Search banners...",
+      filters: {
+        all: "All",
+        active: "Active",
+        inactive: "Inactive"
+      },
+      form: {
+        add: "Add New Banner",
+        edit: "Edit Banner",
+        title: "Banner Title *",
+        description: "Description",
+        type: "Banner Type",
+        active: "Active (show on home page)",
+        create: "Create Banner",
+        update: "Update Banner",
+        cancel: "Cancel"
+      },
+      list: {
+        title: "All Banners",
+        empty: "No banners found. Create one to get started!"
+      },
+      alert: {
+        required: "Please enter a banner title"
+      }
+    },
+    adminSettings: {
+  back: "Back to Dashboard",
+  title: "Admin Settings",
+  subtitle: "Change your admin password",
+
+  current: "Current Password",
+  new: "New Password",
+  confirm: "Confirm New Password",
+
+  button: "Change Password",
+  loading: "Updating...",
+
+  placeholders: {
+    current: "Enter your current password",
+    new: "Enter new password (min. 6 characters)",
+    confirm: "Confirm your new password"
+  },
+
+  success: "✅ Password changed successfully! Redirecting...",
+
+  errors: {
+    length: "New password must be at least 6 characters long.",
+    match: "New passwords do not match.",
+    same: "New password must be different from current password.",
+    failed: "Failed to change password",
+    server: "Error connecting to server. Please try again."
+  },
+
+  defaultTitle: "Default Password",
+  defaultText: "If you haven't changed your password yet, the default password is:",
+  note: "We recommend changing the password immediately for security reasons."
+}
   },
   es: {
     nav: {
@@ -299,7 +373,81 @@ export const translations = {
       button: "Iniciar sesión",
       loading: "Autenticando...",
       error: "Contraseña incorrecta. Inténtalo de nuevo."
-    }
+    },
+    adminDashboard: {
+      sidebar: {
+        panel: "Panel de Administración",
+        dashboard: "Panel",
+        settings: "Configuración",
+        logout: "Cerrar sesión"
+      },
+      top: {
+        title: "Gestor de Banners",
+        subtitle: "Crear y gestionar banners de la página principal",
+        new: "+ Nuevo Banner"
+      },
+      stats: {
+        total: "TOTAL",
+        active: "ACTIVOS",
+        inactive: "INACTIVOS"
+      },
+      search: "Buscar banners...",
+      filters: {
+        all: "Todos",
+        active: "Activos",
+        inactive: "Inactivos"
+      },
+      form: {
+        add: "Nuevo Banner",
+        edit: "Editar Banner",
+        title: "Título del Banner *",
+        description: "Descripción",
+        type: "Tipo de Banner",
+        active: "Activo (mostrar en la página principal)",
+        create: "Crear Banner",
+        update: "Actualizar Banner",
+        cancel: "Cancelar"
+      },
+      list: {
+        title: "Todos los Banners",
+        empty: "No hay banners. ¡Crea uno para empezar!"
+      },
+      alert: {
+        required: "Introduce un título"
+      }
+    },
+    adminSettings: {
+  back: "Volver al Panel",
+  title: "Configuración de Admin",
+  subtitle: "Cambia tu contraseña",
+
+  current: "Contraseña Actual",
+  new: "Nueva Contraseña",
+  confirm: "Confirmar Nueva Contraseña",
+
+  button: "Cambiar Contraseña",
+  loading: "Actualizando...",
+
+  placeholders: {
+    current: "Introduce tu contraseña actual",
+    new: "Introduce nueva contraseña (mín. 6 caracteres)",
+    confirm: "Confirma tu nueva contraseña"
+  },
+
+  success: "✅ Contraseña cambiada correctamente",
+
+  errors: {
+    length: "La contraseña debe tener al menos 6 caracteres",
+    match: "Las contraseñas no coinciden",
+    same: "La nueva contraseña debe ser diferente",
+    failed: "Error al cambiar la contraseña",
+    server: "Error de servidor. Inténtalo de nuevo"
+  },
+
+  defaultTitle: "Contraseña por defecto",
+  defaultText: "Si no has cambiado la contraseña, es:",
+  note: "Recomendamos cambiarla por seguridad"
+}
   }
 };
 

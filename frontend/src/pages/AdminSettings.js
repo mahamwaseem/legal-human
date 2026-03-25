@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/AdminSettings.css';
+import { useLang } from '../context/LanguageContext';
 
 const API_BASE = 'http://localhost:5000/api';
 
 export default function AdminSettings() {
   const navigate = useNavigate();
+  const { t } = useLang(); // ✅ ADDED
+
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -15,7 +18,6 @@ export default function AdminSettings() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    // Check if admin is authenticated
     const token = localStorage.getItem('admin-token');
     if (!token) {
       navigate('/admin/login');
@@ -27,19 +29,18 @@ export default function AdminSettings() {
     setError('');
     setSuccess('');
 
-    // Validate new password
     if (newPassword.length < 6) {
-      setError('New password must be at least 6 characters long.');
+      setError(t.adminSettings.errors.length);
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setError('New passwords do not match.');
+      setError(t.adminSettings.errors.match);
       return;
     }
 
     if (currentPassword === newPassword) {
-      setError('New password must be different from current password.');
+      setError(t.adminSettings.errors.same);
       return;
     }
 
@@ -58,23 +59,22 @@ export default function AdminSettings() {
       const result = await response.json();
 
       if (result.success) {
-        setSuccess('✅ Password changed successfully! Redirecting...');
+        setSuccess(t.adminSettings.success);
         setCurrentPassword('');
         setNewPassword('');
         setConfirmPassword('');
 
-        // Clear auth token and redirect to login
         setTimeout(() => {
           localStorage.removeItem('admin-token');
           localStorage.removeItem('admin-login-time');
           navigate('/admin/login');
         }, 1500);
       } else {
-        setError(result.message || 'Failed to change password');
+        setError(result.message || t.adminSettings.errors.failed);
       }
     } catch (err) {
-      console.error('Password change error:', err);
-      setError('Error connecting to server. Please try again.');
+      console.error(err);
+      setError(t.adminSettings.errors.server);
     } finally {
       setIsLoading(false);
     }
@@ -83,16 +83,25 @@ export default function AdminSettings() {
   return (
     <main className="admin-settings page-enter">
       <div className="admin-settings__container">
+
         <div className="admin-settings__header">
-          <button onClick={() => navigate('/admin')} className="admin-settings__back">
-            ← Back to Dashboard
+          <button
+            onClick={() => navigate('/admin')}
+            className="admin-settings__back"
+          >
+            ← {t.adminSettings.back}
           </button>
         </div>
 
         <div className="admin-settings__card">
+
           <div className="admin-settings__title-section">
-            <h1 className="admin-settings__title">Admin Settings</h1>
-            <p className="admin-settings__subtitle">Change your admin password</p>
+            <h1 className="admin-settings__title">
+              {t.adminSettings.title}
+            </h1>
+            <p className="admin-settings__subtitle">
+              {t.adminSettings.subtitle}
+            </p>
           </div>
 
           <form onSubmit={handleChangePassword} className="admin-settings__form">
@@ -100,15 +109,14 @@ export default function AdminSettings() {
             {success && <div className="admin-settings__success">{success}</div>}
 
             <div className="admin-settings__field">
-              <label htmlFor="currentPassword" className="admin-settings__label">
-                Current Password
+              <label className="admin-settings__label">
+                {t.adminSettings.current}
               </label>
               <input
                 type="password"
-                id="currentPassword"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                placeholder="Enter your current password"
+                placeholder={t.adminSettings.placeholders.current}
                 className="admin-settings__input"
                 disabled={isLoading}
                 required
@@ -116,15 +124,14 @@ export default function AdminSettings() {
             </div>
 
             <div className="admin-settings__field">
-              <label htmlFor="newPassword" className="admin-settings__label">
-                New Password
+              <label className="admin-settings__label">
+                {t.adminSettings.new}
               </label>
               <input
                 type="password"
-                id="newPassword"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="Enter new password (min. 6 characters)"
+                placeholder={t.adminSettings.placeholders.new}
                 className="admin-settings__input"
                 disabled={isLoading}
                 required
@@ -132,15 +139,14 @@ export default function AdminSettings() {
             </div>
 
             <div className="admin-settings__field">
-              <label htmlFor="confirmPassword" className="admin-settings__label">
-                Confirm New Password
+              <label className="admin-settings__label">
+                {t.adminSettings.confirm}
               </label>
               <input
                 type="password"
-                id="confirmPassword"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Confirm your new password"
+                placeholder={t.adminSettings.placeholders.confirm}
                 className="admin-settings__input"
                 disabled={isLoading}
                 required
@@ -152,19 +158,22 @@ export default function AdminSettings() {
               className="admin-settings__btn"
               disabled={isLoading || !currentPassword || !newPassword || !confirmPassword}
             >
-              {isLoading ? 'Updating...' : 'Change Password'}
+              {isLoading ? t.adminSettings.loading : t.adminSettings.button}
             </button>
           </form>
 
           <div className="admin-settings__info">
-            <h3 className="admin-settings__info-title">Default Password</h3>
+            <h3 className="admin-settings__info-title">
+              {t.adminSettings.defaultTitle}
+            </h3>
             <p className="admin-settings__info-text">
-              If you haven't changed your password yet, the default password is: <code>LegalAdmin@2024</code>
+              {t.adminSettings.defaultText} <code>LegalAdmin@2024</code>
             </p>
             <p className="admin-settings__info-note">
-              We recommend changing the password immediately for security reasons.
+              {t.adminSettings.note}
             </p>
           </div>
+
         </div>
       </div>
     </main>
