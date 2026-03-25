@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useLang } from '../context/LanguageContext';
 import { useBanners } from '../context/BannerContext';
+import HomeBanner from '../components/HomeBanner';
 import './Home.css';
 
 const stats = [
@@ -42,41 +43,19 @@ const features = [
 
 export default function Home() {
   const { t, lang } = useLang();
-  const { banners } = useBanners();
+  
   const heroRef = useRef(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const activeBanners = banners.filter(b => b.active);
+  
 
   return (
     <main className="home page-enter">
       {/* Banners Section */}
-      {activeBanners.length > 0 && (
-        <section className="home-banners">
-          <div className="container">
-            {activeBanners.map(banner => (
-              <div key={banner.id} className={`home-banner home-banner--${banner.type}`}>
-                <div className="home-banner__icon">
-                  {banner.type === 'success' && '✅'}
-                  {banner.type === 'warning' && '⚠️'}
-                  {banner.type === 'alert' && '🚨'}
-                  {banner.type === 'info' && '📢'}
-                </div>
-                <div className="home-banner__content">
-                  <h3 className="home-banner__title">{banner.title}</h3>
-                  {banner.description && (
-                    <p className="home-banner__text">{banner.description}</p>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
+      <HomeBanner />
       {/* Hero Section */}
       <section className="hero" ref={heroRef}>
         <div className="hero__bg-decor">

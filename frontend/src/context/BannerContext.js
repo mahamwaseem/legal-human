@@ -116,6 +116,7 @@ export function BannerProvider({ children }) {
   return (
     <BannerContext.Provider value={{
       banners,
+       activeBanners: banners.filter(b => b.active), 
       loading,
       error,
       addBanner,
