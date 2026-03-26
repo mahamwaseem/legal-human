@@ -182,17 +182,7 @@ export default function AdminSettings() {
 
               </form>
 
-              <div className="admin-settings__info">
-                <h3>{t.adminSettings.defaultTitle}</h3>
-                <p>
-                  {t.adminSettings.defaultText}{' '}
-                  <code>LegalAdmin@2024</code>
-                </p>
-                <p className="admin-settings__info-note">
-                  {t.adminSettings.note}
-                </p>
-              </div>
-
+              
             </div>
           </div>
         </div>
