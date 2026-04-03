@@ -1,6 +1,19 @@
 # ⚖️ Legal Human – Tax & Immigration Law Website
 
-A professional, bilingual (English/Spanish) law firm website built with **React** (frontend) and **Node.js/Express** (backend).
+A professional, bilingual (English/Spanish) law firm website built with **React** (frontend) and **Node.js/Express** (backend) with **MongoDB** database integration.
+
+**Status:** ✅ Production Ready | **Version:** 2.0.0
+
+---
+
+## 🎯 What's New (v2.0)
+
+✅ **MongoDB Integration** - Cloud or local database support  
+✅ **Contact Form Overhaul** - Captures Full Name, DNI/NIE, Address, Contact Number  
+✅ **Contact Management** - Admin endpoints to view/manage submissions  
+✅ **Reusable Contact Service** - Library can be used in other projects  
+✅ **Full Validation** - Spanish DNI/NIE format, phone validation, field-level errors  
+✅ **Rate Limiting** - 5 submissions per 15 minutes protection  
 
 ---
 
@@ -8,176 +21,315 @@ A professional, bilingual (English/Spanish) law firm website built with **React*
 
 ```
 legal-human/
-├── frontend/              # React app
-│   ├── public/
-│   │   └── index.html
+├── frontend/                    # React app (Port 3000)
 │   ├── src/
-│   │   ├── components/
-│   │   │   ├── Navbar.js / Navbar.css
-│   │   │   └── Footer.js / Footer.css
+│   │   ├── components/         # Navbar, Footer, etc.
 │   │   ├── context/
-│   │   │   └── LanguageContext.js   # EN/ES translations + provider
+│   │   │   └── LanguageContext.js   # EN/ES translations
 │   │   ├── pages/
-│   │   │   ├── Home.js / Home.css
-│   │   │   ├── About.js / About.css
-│   │   │   ├── Services.js / Services.css
-│   │   │   ├── Contact.js / Contact.css
+│   │   │   ├── Home.js         # Hero + Services
+│   │   │   ├── About.js        # Team profiles
+│   │   │   ├── Services.js     # Tax & Immigration
+│   │   │   ├── Contact.js      # ✅ UPDATED - New fields
 │   │   │   ├── Privacy.js
-│   │   │   ├── LegalNotice.js
-│   │   │   ├── NotFound.js
-│   │   │   └── Legal.css
-│   │   ├── App.js
-│   │   ├── index.js
-│   │   └── index.css
-│   └── package.json
+│   │   │   └── LegalNotice.js
+│   │   └── App.js
 │
-├── backend/               # Node.js / Express API
+├── backend/                     # Node.js/Express (Port 5000)
 │   ├── src/
-│   │   └── server.js
-│   ├── .env.example
-│   └── package.json
+│   │   ├── server.js           # ✅ UPDATED - MongoDB + contacts
+│   │   ├── db.js               # ✅ NEW - MongoDB connection
+│   │   └── dataManager.js      # Banner management
+│   ├── lib/
+│   │   └── contactService.js   # ✅ NEW - Reusable contact library
+│   ├── package.json            # ✅ UPDATED - mongoose added
+│   ├── .env                    # ✅ NEW - Configuration
+│   └── .env.example            # ✅ UPDATED
 │
-├── package.json           # Root (runs both with concurrently)
-└── README.md
+└── README.md                    (This file)
 ```
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Quick Start (5 Minutes)
 
-### 1. Install dependencies
+### 1️⃣ Setup MongoDB
+
+**Option A: Local MongoDB**
+```bash
+mongod
+```
+
+**Option B: MongoDB Atlas (Cloud)**
+- Create account at https://www.mongodb.com/cloud/atlas
+- Get connection string
+- Update `backend/.env` with MONGODB_URI
+
+### 2️⃣ Install & Configure
 
 ```bash
-# From the project root
-npm install          # installs concurrently
+# Install dependencies
 cd frontend && npm install
 cd ../backend && npm install
+
+# Configure backend
+cd backend
+cp .env.example .env
 ```
 
-### 2. Configure environment variables
+### 3️⃣ Start Development Servers
 
+**Terminal 1 - Backend**
 ```bash
-cp backend/.env.example backend/.env
-# Edit backend/.env with your SMTP credentials
+cd backend
+npm start
 ```
 
-### 3. Run in development
+**Expected Output:**
+```
+✅ MongoDB connected successfully
+⚡ Legal Human API running on port 5000
+```
 
+**Terminal 2 - Frontend**
 ```bash
-# From root – starts both frontend (port 3000) and backend (port 5000)
-npm run dev
+cd frontend
+npm start
+```
 
-# OR separately:
-npm run dev:frontend   # React on http://localhost:3000
-npm run dev:backend    # Express on http://localhost:5000
+### 4️⃣ Test Contact Form
+
+1. Go to Contact page
+2. Fill test data:
+   - Full Name: John Doe
+   - DNI/NIE: 12345678A
+   - Address: 123 Main Street, Madrid
+   - Contact: +34912345678
+3. Click "Send" ✅
+
+---
+
+## 📋 Contact Form Fields
+
+### Required ⭐
+| Field | Format | Example |
+|-------|--------|---------|
+| Full Name | 2-100 chars | John Doe |
+| DNI/NIE | 12345678A or Y12345678 | 12345678A |
+| Address | 5-200 chars | 123 Main St |
+| Contact Number | 6-15 digits, +optional | +34912345678 |
+
+### Optional
+| Field | Format |
+|-------|--------|
+| Email | Valid email |
+| Service | legal-consultation, documentation, representation, other |
+| Message | Up to 2000 chars |
+
+---
+
+## 🔗 Backend API
+
+### Create Contact (Public)
+**POST** `/api/contact`
+
+**Request:**
+```json
+{
+  "fullName": "John Doe",
+  "dniNie": "12345678A",
+  "address": "123 Main St, Madrid",
+  "contactNumber": "+34912345678",
+  "email": "john@example.com",        // optional
+  "service": "legal-consultation",    // optional
+  "message": "Need legal help...",    // optional
+  "lang": "en"                        // en or es
+}
+```
+
+**Response (Success):**
+```json
+{
+  "success": true,
+  "message": "Message sent successfully!",
+  "data": {
+    "id": "507f1f77bcf86cd799439011",
+    "timestamp": "2024-04-03T10:00:00.000Z"
+  }
+}
+```
+
+**Features:**
+- ✅ Full validation
+- ✅ Rate limiting (5/15 min)
+- ✅ MongoDB storage + file fallback
+- ✅ Bilingual errors
+- ✅ Field-level error messages
+
+**Test with cURL:**
+```bash
+curl -X POST http://localhost:5000/api/contact \
+  -H "Content-Type: application/json" \
+  -d '{"fullName":"Test","dniNie":"12345678A","address":"123 Main","contactNumber":"+34912345678"}'
 ```
 
 ---
 
-## 🌐 Pages & Features
+### Admin Endpoints
 
-| Page | Route | Description |
-|------|-------|-------------|
-| Home | `/` | Hero, stats, about intro, service features, CTA |
-| About | `/about` | Team profiles (Yasmina & Dana), values, mission quote |
-| Services | `/services` | Filterable cards: Taxation, International Tax, Immigration |
-| Contact | `/contact` | Form with validation, info panel, language badges |
-| Privacy | `/privacy` | GDPR-compliant privacy policy (EN + ES) |
-| Legal Notice | `/legal-notice` | Spanish legal notice (EN + ES) |
-| 404 | `*` | Custom not-found page |
+**Get All Contacts**
+```
+GET /api/contacts?status=new&skip=0&limit=50
+```
+
+**Get Single Contact**
+```
+GET /api/contacts/:contactId
+```
+
+**Update Contact**
+```
+PUT /api/contacts/:contactId
+{
+  "status": "reviewing",
+  "notes": "Initial consultation scheduled"
+}
+```
+
+**Delete Contact**
+```
+DELETE /api/contacts/:contactId
+```
+
+---
+
+## 🗄️ Database
+
+### MongoDB Schema
+```javascript
+{
+  fullName: String,           // Required
+  dniNie: String,             // Required: Spanish format
+  address: String,            // Required
+  contactNumber: String,      // Required
+  email: String,              // Optional
+  message: String,            // Optional
+  service: String,            // Optional
+  status: String,             // new|reviewing|contacted|resolved
+  language: String,           // en|es
+  ipAddress: String,          // Auto-captured
+  userAgent: String,          // Auto-captured
+  notes: String,              // Admin notes
+  createdAt: DateTime,        // Auto-generated
+  updatedAt: DateTime         // Auto-generated
+}
+```
+
+### Fallback Storage
+If MongoDB unavailable: `backend/data/contacts.json`
+
+---
+
+## 🌐 Pages
+
+| Page | Route | Features |
+|------|-------|----------|
+| Home | `/` | Hero, stats, services, CTA |
+| About | `/about` | Team profiles, values |
+| Services | `/services` | Tax, IntlTax, Immigration |
+| Contact | `/contact` | ✅ New form with validation |
+| Privacy | `/privacy` | GDPR policy |
+| Legal | `/legal-notice` | Spanish legal |
 
 ---
 
 ## 🌍 Bilingual Support (EN / ES)
 
-All UI text is managed through `src/context/LanguageContext.js`.
-
-- Toggle language via the **EN | ES** switcher in the navbar
-- All pages, labels, placeholders and alerts switch instantly
-- No page reload required – context-based state management
-
-To add more languages, extend the `translations` object with a new key (e.g., `fr`, `ar`).
+- Toggle via navbar **EN | ES** switcher
+- Instant switching (no reload)
+- Form labels in both languages
+- Error messages bilingual
+- Supported: English (en), Spanish (es)
 
 ---
 
 ## 🎨 Design System
 
-### Color Palette (Advocate-inspired)
-| Variable | Value | Usage |
-|----------|-------|-------|
-| `--clr-primary` | `#7A4F5B` | Burgundy-rose – buttons, accents |
-| `--clr-primary-dark` | `#5C3542` | Deep maroon – headings, logo |
-| `--clr-accent` | `#C9A96E` | Gold – decorative dividers, hover |
-| `--clr-bg` | `#F5F0EC` | Warm parchment – main background |
-| `--clr-footer` | `#7A4F5B` | Footer background |
+### Colors
+| Variable | Hex | Usage |
+|----------|-----|-------|
+| Primary | `#7A4F5B` | Buttons, links |
+| Primary Dark | `#5C3542` | Headings |
+| Accent | `#C9A96E` | Gold accents |
+| Background | `#F5F0EC` | Page bg |
 
 ### Typography
-- **Display / Headings**: Cormorant Garamond (serif, elegant)
-- **Body / UI**: Jost (geometric sans-serif, clean)
+- **Headings:** Cormorant Garamond (serif)
+- **Body:** Jost (sans-serif)
+
+### Responsive
+- ✅ Desktop (1920px+)
+- ✅ Tablet (768px-1024px)
+- ✅ Mobile (< 768px)
 
 ---
 
-## 🔧 Backend API
+## 🔒 Security
 
-### `POST /api/contact`
+### Implemented
+- ✅ Input validation
+- ✅ Rate limiting (5/15 min)
+- ✅ Helmet.js headers
+- ✅ CORS protection
+- ✅ XSS protection
 
-**Request body:**
-```json
-{
-  "name": "John Doe",
-  "email": "john@example.com",
-  "phone": "+34 600 000 000",
-  "service": "Digital Nomad Visa",
-  "message": "I need help with...",
-  "lang": "en"
-}
-```
-
-**Response:**
-```json
-{ "success": true, "message": "Message sent successfully!" }
-```
-
-**Features:**
-- Input validation (required fields, email format)
-- Rate limiting (5 requests per 15 minutes per IP)
-- Helmet security headers
-- CORS configured for frontend origin
-- Ready for Nodemailer integration (see server.js comments)
-
-### `GET /api/health`
-Returns `{ status: "OK", timestamp: "..." }` — useful for uptime checks.
+### For Production
+- [ ] Add admin authentication
+- [ ] Use HTTPS/SSL
+- [ ] Email verification
+- [ ] GDPR compliance
+- [ ] Monitoring & logging
 
 ---
 
-## 📧 Email Setup (Production)
+## ⚙️ Environment Variables
 
-In `backend/src/server.js`, uncomment and configure the Nodemailer block:
+### Backend (`backend/.env`)
+```env
+# Server
+PORT=5000
+CLIENT_URL=http://localhost:3000
 
-```js
-const nodemailer = require('nodemailer');
-const transporter = nodemailer.createTransporter({
-  host: process.env.EMAIL_HOST,    // smtp.gmail.com
-  port: process.env.EMAIL_PORT,    // 587
-  auth: {
-    user: process.env.EMAIL_USER,  // asorialegalhuman@gmail.com
-    pass: process.env.EMAIL_PASS,  // Gmail App Password
-  }
-});
+# MongoDB
+MONGODB_URI=mongodb://localhost:27017/legal-human
+# OR MongoDB Atlas:
+# MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/legal-human
 
-await transporter.sendMail({
-  from: `"${name}" <${email}>`,
-  to: 'asorialegalhuman@gmail.com',
-  subject: `New enquiry: ${service || 'General'}`,
-  text: message,
-  html: `<p><strong>From:</strong> ${name} (${email})<br>
-         <strong>Phone:</strong> ${phone}<br>
-         <strong>Service:</strong> ${service}<br><br>
-         ${message}</p>`
-});
+# Email (Optional)
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=your@gmail.com
+EMAIL_PASS=your_app_password
 ```
 
-For Gmail, use an **App Password** (not your main password): [Google App Passwords](https://myaccount.google.com/apppasswords)
+### Frontend (`frontend/.env` - Optional)
+```env
+REACT_APP_API_URL=http://localhost:5000
+```
+
+---
+
+## 📧 Email Setup (Optional)
+
+1. Get Gmail App Password at https://myaccount.google.com/apppasswords
+2. Add to `backend/.env`:
+   ```env
+   EMAIL_HOST=smtp.gmail.com
+   EMAIL_PORT=587
+   EMAIL_USER=your@gmail.com
+   EMAIL_PASS=your_16_char_password
+   ```
+3. Uncomment email code in `backend/src/server.js`
 
 ---
 
@@ -185,42 +337,179 @@ For Gmail, use an **App Password** (not your main password): [Google App Passwor
 
 ### Frontend (Vercel / Netlify)
 ```bash
-cd frontend && npm run build
-# Deploy the build/ folder
+cd frontend
+npm run build
+# Deploy build/ folder
 ```
 
-Set environment variable: `REACT_APP_API_URL=https://your-backend.com`
+**Set:** `REACT_APP_API_URL=https://your-backend.com`
 
-Update fetch calls in Contact.js:
-```js
-const res = await fetch(`${process.env.REACT_APP_API_URL}/api/contact`, { ... });
-```
-
-### Backend (Railway / Render / VPS)
+### Backend (Railway / Render)
 ```bash
-cd backend && npm start
+cd backend
+npm start
 ```
 
-Set environment variables in your hosting dashboard using `.env.example` as reference.
+**Set environment variables** in hosting dashboard
+
+### Database
+- Create MongoDB Atlas cluster
+- Get connection string
+- Add to `MONGODB_URI` in production
 
 ---
 
-## 📋 Services Covered
+## 🧪 Testing
 
-**Taxation:** Income Tax, Self-Employed Tax, Wealth Tax, AEAT Management, Tax Inspections
+### Form Validation
+- ✅ Required fields error if empty
+- ✅ DNI format: 12345678A or Y12345678
+- ✅ Address min 5 chars
+- ✅ Contact 6-15 digits
+- ✅ Errors clear on input
+- ✅ Bilingual errors
 
-**International Taxation:** Beckham Law, Double Taxation Agreements, Forms 720/721, Non-Residents IRNR
+### API Tests
+```bash
+# Test successful submission
+curl -X POST http://localhost:5000/api/contact \
+  -H "Content-Type: application/json" \
+  -d '{"fullName":"Test","dniNie":"12345678A","address":"123 Main","contactNumber":"+34912345678"}'
 
-**Immigration:** Residence Permits, Family Reunification, EU Resident Permits, Spanish Nationality, Digital Nomad Visa, Asylum
+# Test validation (missing field)
+curl -X POST http://localhost:5000/api/contact \
+  -H "Content-Type: application/json" \
+  -d '{"dniNie":"12345678A","address":"123 Main"}'
+```
 
 ---
 
-## 📞 Contact Details (Pre-configured)
+## 🎯 Services
+
+### Taxation
+- Income Tax (IRPF)
+- Self-Employed (Autónomos)
+- Wealth Tax
+- Tax Planning
+- AEAT Management
+- Tax Inspections
+
+### International Tax
+- Beckham Law
+- Double Taxation
+- Forms 720/721
+- Non-Residents (IRNR)
+
+### Immigration
+- Residence Permits
+- Work Visas
+- Family Reunification
+- EU Permits
+- Spanish Nationality
+- Digital Nomad Visa
+- Student Visas
+- Asylum
+
+---
+
+## 📞 Contact
 
 - 📞 +34 665 12 77 58
-- 📞 +34 653 54 64 75  
+- 📞 +34 653 54 64 75
 - ✉️ asorialegalhuman@gmail.com
+- 📍 Spain
 
 ---
+
+## 🛠️ Reusable Contact Service
+
+Use `backend/lib/contactService.js` in other projects:
+
+```bash
+cp backend/lib/contactService.js your-project/lib/
+cp backend/src/db.js your-project/src/
+npm install mongoose
+```
+
+**Usage:**
+```javascript
+const { createContact, getContacts, validateContactData } = require('./lib/contactService');
+
+// Validate
+const validation = validateContactData({ fullName, dniNie, address, contactNumber });
+
+// Create
+const contact = await createContact({ fullName, dniNie, address, contactNumber });
+
+// Get
+const contacts = await getContacts({ status: 'new' });
+```
+
+---
+
+## 🐛 Troubleshooting
+
+### MongoDB Failed
+- Start MongoDB: `mongod`
+- Or verify MONGODB_URI in `.env`
+- App uses JSON fallback automatically
+
+### Too Many Requests
+- Rate limit: 5 requests per 15 minutes
+- Wait 15 minutes to try again
+
+### Invalid DNI/NIE
+- Use: 8 digits + 1 letter (e.g., 12345678A)
+- Or: Letter + 7 digits + letter (e.g., Y1234567A)
+
+### CORS Error
+- Ensure backend running on port 5000
+- Check CORS_ORIGIN in `.env`
+- Frontend has proxy in package.json
+
+---
+
+## 📝 Updated Files (v2.0)
+
+### New Files ✅
+- `backend/src/db.js` - MongoDB connection
+- `backend/lib/contactService.js` - Contact service
+- `backend/.env` - Configuration
+
+### Updated Files ✅
+- `backend/src/server.js` - Contact endpoints
+- `backend/package.json` - mongoose added
+- `frontend/src/pages/Contact.js` - New form
+- `frontend/src/pages/Contact.css` - Error styles
+- `frontend/src/context/LanguageContext.js` - Translations
+- `backend/.env.example` - MongoDB template
+
+---
+
+## 📚 Tech Stack
+
+**Frontend:**
+- React 18
+- React Router
+- CSS3 + Variables
+- Context API
+
+**Backend:**
+- Node.js
+- Express.js
+- MongoDB + Mongoose
+- Helmet (Security)
+- Rate Limiter
+- CORS
+
+**Database:**
+- MongoDB (Cloud & Local)
+- JSON File (Fallback)
+
+---
+
+**Status:** ✅ Production Ready  
+**Version:** 2.0.0  
+**Last Updated:** April 3, 2024  
 
 *Built with ❤️ for Legal Human — Extranjería y Fiscalidad*

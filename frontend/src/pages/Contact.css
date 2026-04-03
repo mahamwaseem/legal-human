@@ -132,6 +132,8 @@ a.contact-info__item-value:hover {
 
 /* Form Wrap */
 .contact-form-wrap {
+  max-width: 900px;
+  margin: 3.5rem auto;
   background: var(--clr-white);
   border: 1px solid var(--clr-border);
   border-radius: var(--radius-lg);
@@ -226,6 +228,24 @@ a.contact-info__item-value:hover {
   border-color: var(--clr-primary);
   background: var(--clr-white);
   box-shadow: 0 0 0 3px rgba(122, 79, 91, 0.08);
+}
+
+.contact-form__input.error {
+  border-color: #c85050;
+  background: rgba(200, 80, 80, 0.03);
+}
+
+.contact-form__input.error:focus {
+  border-color: #c85050;
+  box-shadow: 0 0 0 3px rgba(200, 80, 80, 0.08);
+}
+
+.contact-form__error {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: #c85050;
+  margin-top: 0.25rem;
+  display: block;
 }
 
 .contact-form__select {

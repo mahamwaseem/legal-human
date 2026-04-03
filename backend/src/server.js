@@ -5,6 +5,8 @@ const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 const { getAllBanners, getBannerById, createBanner, updateBanner, deleteBanner, getAdminPassword, updateAdminPassword } = require('./dataManager');
+const { connectDB, isConnected } = require('./db');
+const { createContactWithFallback, getContacts, getContactById, updateContact, deleteContact, getContactsCount, validateContactData } = require('../lib/contactService');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -21,55 +23,165 @@ app.use(express.json({ limit: '10kb' }));
 // Rate limiting
 const contactLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 2,
+  max: 5,
   message: { success: false, message: 'Too many requests. Please try again later.' }
 });
 
-// Contact form endpoint
+// ===== CONTACT FORM ENDPOINTS =====
+
+// Create new contact submission
 app.post('/api/contact', contactLimiter, async (req, res) => {
-  const { name, email, phone, service, message, lang } = req.body;
-
-  // Validation
-  if (!name || !email || !message) {
-    return res.status(400).json({
-      success: false,
-      message: lang === 'es'
-        ? 'Por favor completa todos los campos requeridos.'
-        : 'Please fill in all required fields.'
-    });
-  }
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    return res.status(400).json({
-      success: false,
-      message: lang === 'es' ? 'Email no válido.' : 'Invalid email address.'
-    });
-  }
+  const { fullName, dniNie, address, contactNumber, email, message, service, lang } = req.body;
+  const language = lang || 'en';
 
   try {
-    // Log the contact submission (in production, use nodemailer to send email)
-    console.log('📧 New contact form submission:');
-    console.log({ name, email, phone, service, message, timestamp: new Date().toISOString() });
+    // Validate input
+    const validation = validateContactData({
+      fullName,
+      dniNie,
+      address,
+      contactNumber,
+      email,
+      message,
+      service
+    });
 
-    // In production, configure nodemailer:
-    // const transporter = nodemailer.createTransporter({ ... });
-    // await transporter.sendMail({ from: email, to: 'asorialegalhuman@gmail.com', ... });
+    if (!validation.isValid) {
+      return res.status(400).json({
+        success: false,
+        message: language === 'es'
+          ? 'Error de validación: ' + Object.values(validation.errors).join(', ')
+          : 'Validation error: ' + Object.values(validation.errors).join(', '),
+        errors: validation.errors
+      });
+    }
 
-    res.status(200).json({
+    // Create contact with database or file fallback
+    const contact = await createContactWithFallback(
+      {
+        fullName,
+        dniNie,
+        address,
+        contactNumber,
+        email,
+        message,
+        service,
+        language
+      },
+      {
+        ipAddress: req.ip,
+        userAgent: req.get('user-agent')
+      }
+    );
+
+    // Log the submission
+    console.log('✅ New contact submission received:', {
+      id: contact._id || contact.id,
+      fullName,
+      email,
+      timestamp: new Date().toISOString()
+    });
+
+    res.status(201).json({
       success: true,
-      message: lang === 'es'
+      message: language === 'es'
         ? '¡Mensaje enviado correctamente! Nos pondremos en contacto contigo pronto.'
-        : 'Message sent successfully! We will contact you soon.'
+        : 'Message sent successfully! We will contact you soon.',
+      data: {
+        id: contact._id || contact.id,
+        timestamp: contact.createdAt || new Date().toISOString()
+      }
     });
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.error('❌ Error creating contact:', error);
+    
+    const language = req.body.lang || 'en';
+    const errorMessage = error.message === 'Validation failed'
+      ? 'Validation error'
+      : 'Error processing contact submission';
+    
     res.status(500).json({
       success: false,
-      message: lang === 'es'
-        ? 'Error al enviar el mensaje. Por favor intenta más tarde.'
-        : 'Error sending message. Please try again later.'
+      message: language === 'es'
+        ? 'Error al procesar el mensaje. Por favor intenta más tarde.'
+        : errorMessage,
+      errors: error.validationErrors
     });
+  }
+});
+
+// Get all contacts (admin only)
+app.get('/api/contacts', async (req, res) => {
+  try {
+    const { status, skip = 0, limit = 50 } = req.query;
+    const filter = status ? { status } : {};
+    
+    const contacts = await getContacts(filter, {
+      skip: parseInt(skip),
+      limit: parseInt(limit)
+    });
+    const total = await getContactsCount(filter);
+
+    res.json({
+      success: true,
+      data: contacts,
+      pagination: {
+        skip: parseInt(skip),
+        limit: parseInt(limit),
+        total
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching contacts:', error);
+    res.status(500).json({ success: false, message: 'Error fetching contacts' });
+  }
+});
+
+// Get single contact by ID (admin only)
+app.get('/api/contacts/:id', async (req, res) => {
+  try {
+    const contact = await getContactById(req.params.id);
+    res.json({ success: true, data: contact });
+  } catch (error) {
+    if (error.code === 'NOT_FOUND') {
+      return res.status(404).json({ success: false, message: 'Contact not found' });
+    }
+    console.error('Error fetching contact:', error);
+    res.status(500).json({ success: false, message: 'Error fetching contact' });
+  }
+});
+
+// Update contact status or notes (admin only)
+app.put('/api/contacts/:id', async (req, res) => {
+  try {
+    const { status, notes } = req.body;
+    const updates = {};
+    
+    if (status) updates.status = status;
+    if (notes) updates.notes = notes;
+
+    const contact = await updateContact(req.params.id, updates);
+    res.json({ success: true, data: contact });
+  } catch (error) {
+    if (error.code === 'NOT_FOUND') {
+      return res.status(404).json({ success: false, message: 'Contact not found' });
+    }
+    console.error('Error updating contact:', error);
+    res.status(500).json({ success: false, message: 'Error updating contact' });
+  }
+});
+
+// Delete contact (admin only)
+app.delete('/api/contacts/:id', async (req, res) => {
+  try {
+    const contact = await deleteContact(req.params.id);
+    res.json({ success: true, message: 'Contact deleted successfully', data: contact });
+  } catch (error) {
+    if (error.code === 'NOT_FOUND') {
+      return res.status(404).json({ success: false, message: 'Contact not found' });
+    }
+    console.error('Error deleting contact:', error);
+    res.status(500).json({ success: false, message: 'Error deleting contact' });
   }
 });
 
@@ -252,8 +364,23 @@ app.use((req, res) => {
   res.status(404).json({ success: false, message: 'Route not found' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Legal Human API running on port ${PORT}`);
-});
+// Initialize server
+async function startServer() {
+  try {
+    // Connect to MongoDB (optional, with fallback to file storage)
+    await connectDB();
+    
+    app.listen(PORT, () => {
+      const dbStatus = isConnected() ? '✅ MongoDB' : '📁 File-based';
+      console.log(`⚡ Legal Human API running on port ${PORT}`);
+      console.log(`📊 Database: ${dbStatus} storage`);
+    });
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  }
+}
+
+startServer();
 
 module.exports = app;
